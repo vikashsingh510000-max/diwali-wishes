@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Diwali Wishes Creator | VS</title>
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+
+body{
+ font-family:Arial,sans-serif;
+ background:linear-gradient(135deg,#21002e,#5c1600,#a83200);
+ color:white;
+ text-align:center;
+ min-height:100vh;
+ padding:20px;
+}
+
+.container{
+ max-width:430px;
+ margin:25px auto;
+ padding:25px;
+ background:#240b16;
+ border:2px solid gold;
+ border-radius:20px;
+ box-shadow:0 0 25px #ff9800;
+}
+
+h1{
+ color:#ffcc00;
+ margin-bottom:15px;
+}
+
+input{
+ width:100%;
+ padding:13px;
+ margin:10px 0;
+ border:2px solid gold;
+ border-radius:10px;
+ font-size:16px;
+}
+
+button{
+ width:100%;
+ padding:13px;
+ margin-top:12px;
+ border:none;
+ border-radius:10px;
+ background:linear-gradient(90deg,#ff9800,#ffcc00);
+ color:#500000;
+ font-weight:bold;
+ font-size:16px;
+ cursor:pointer;
+}
+
+button:hover{transform:scale(1.02)}
+
+#preview{
+ display:none;
+ margin-top:25px;
+ padding:20px;
+ border:2px solid gold;
+ border-radius:15px;
+ background:linear-gradient(145deg,#700000,#e65c00);
+}
+
+#preview img{
+ width:145px;
+ height:145px;
+ object-fit:cover;
+ border-radius:50%;
+ border:4px solid gold;
+ margin:15px;
+}
+
+.diya{font-size:35px;animation:glow 1s infinite alternate}
+
+@keyframes glow{
+ from{filter:drop-shadow(0 0 3px orange)}
+ to{filter:drop-shadow(0 0 18px gold)}
+}
+
+#shareLink{
+ word-break:break-all;
+ margin-top:15px;
+ color:#ffe082;
+}
+
+footer{
+ margin-top:25px;
+ color:gold;
+ font-size:13px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container" id="creator">
+
+<h1>🪔 Diwali Wishes Creator 🪔</h1>
+<p>Create your personalized Diwali wishes link!</p>
+
+<input id="name" type="text" placeholder="Enter Your Name">
+
+<input id="photo" type="file" accept="image/*">
+
+<button onclick="generateWish()">✨ Create My Wishes</button>
+
+<div id="preview">
+ <div class="diya">🪔 ✨ 🪔</div>
+ <h1>Happy Diwali!</h1>
+
+ <img id="userPhoto" alt="Uploaded photo">
+
+ <h2 id="displayName"></h2>
+
+ <p style="margin:15px 0;line-height:1.7">
+ May this Diwali bring happiness, prosperity,
+ success and endless joy into your life.
+ <br><br>
+ Wishing you and your family a very
+ Happy and Prosperous Diwali! 🎆
+ </p>
+
+ <div class="diya">🎇 🪔 🎇</div>
+</div>
+
+<button id="shareBtn" style="display:none" onclick="shareWhatsApp()">
+ 📲 Share on WhatsApp
+</button>
+
+<p id="shareLink"></p>
+
+<footer>
+ Powered by <b>Vikash Singh</b><br>
+ © 2026 VS Wishes
+</footer>
+
+</div>
+
+<script>
+let generatedUrl = "";
+
+function generateWish(){
+
+ const name = document.getElementById("name").value.trim();
+ const file = document.getElementById("photo").files[0];
+
+ if(!name || !file){
+   alert("Please enter your name and upload a photo!");
+   return;
+ }
+
+ if(file.size > 3 * 1024 * 1024){
+   alert("Please select a photo smaller than 3 MB.");
+   return;
+ }
+
+ const reader = new FileReader();
+
+ reader.onload = function(e){
+
+   const photoData = e.target.result;
+
+   document.getElementById("displayName").innerText =
+      "With Love, " + name;
+
+   document.getElementById("userPhoto").src = photoData;
+
+   document.getElementById("preview").style.display = "block";
+
+   // Create personalized link
+   const params = new URLSearchParams({
+      name: name,
+      photo: photoData
+   });
+
+   generatedUrl = location.origin + location.pathname +
+                  "?" + params.toString();
+
+   document.getElementById("shareLink").innerText =
+      "Your wishes link:\n" + generatedUrl;
+
+   document.getElementById("shareBtn").style.display = "block";
+ };
+
+ reader.readAsDataURL(file);
+}
+
+function shareWhatsApp(){
+
+ const message =
+ "🪔 Happy Diwali! 🎆\n\n" +
+ "I have created a special Diwali wish for you!\n\n" +
+ generatedUrl;
+
+ window.open(
+   "https://wa.me/?text=" + encodeURIComponent(message),
+   "_blank"
+ );
+}
+
+// Display wishes when someone opens shared link
+window.addEventListener("DOMContentLoaded",()=>{
+
+ const params = new URLSearchParams(location.search);
+ const name = params.get("name");
+ const photo = params.get("photo");
+
+ if(name && photo && photo.startsWith("data:image/")){
+
+   document.getElementById("creator").querySelector("h1")
+     .innerText = "🪔 Special Diwali Wishes 🪔";
+
+   document.getElementById("name").style.display = "none";
+   document.getElementById("photo").style.display = "none";
+
+   document.querySelector("#creator > p").style.display = "none";
+   document.querySelector("#creator > button").style.display = "none";
+
+   document.getElementById("displayName").innerText =
+     "With Love, " + name;
+
+   document.getElementById("userPhoto").src = photo;
+   document.getElementById("preview").style.display = "block";
+
+   document.getElementById("shareBtn").style.display = "block";
+
+   generatedUrl = location.href;
+ }
+});
+</script>
+
+</body>
+</html>
